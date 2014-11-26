@@ -9,19 +9,45 @@
 #import "ViewController.h"
 
 @interface ViewController ()
-
+@property (nonatomic, weak) IBOutlet UIView *container;
+@property (nonatomic) UIViewController *childViewController;
 @end
 
 @implementation ViewController
 
-- (void)viewDidLoad {
-	[super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+- (UIViewController *)childViewController {
+
+	if (!_childViewController) {
+		_childViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"test"];
+		[self addChildViewController:_childViewController];
+		[_childViewController didMoveToParentViewController:self];
+	}
+
+	return _childViewController;
 }
 
-- (void)didReceiveMemoryWarning {
-	[super didReceiveMemoryWarning];
-	// Dispose of any resources that can be recreated.
+- (IBAction)toggle:(id)sender {
+
+	UIViewController *vc = self.childViewController;
+	UIView *v = vc.view;
+
+	if (v.superview) {
+
+		[UIView animateWithDuration:0.3f animations:^{
+			v.alpha = 0.0f;
+		} completion:^(BOOL finished) {
+			[v removeFromSuperview];
+		}];
+
+	} else {
+
+		v.alpha = 0.0f;
+		v.frame = self.container.bounds;
+		[self.container addSubview:v];
+		[UIView animateWithDuration:0.3f animations:^{
+			v.alpha = 1.0f;
+		}];
+	}
 }
 
 @end
